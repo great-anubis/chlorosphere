@@ -75,7 +75,7 @@ Develop a machine learning-powered system to detect plant diseases from leaf ima
 - **Focus on Custom Model Development:** Emphasis on building a CNN from scratch to solidify ML understanding.
 
 ## Team
-- Great
-- Deborah
-- Carlentz
-- Nutifafa
+- **Great**
+- **Deborah**
+- **Carlentz**
+- **Nutifafa**
