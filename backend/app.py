@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import ast
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
@@ -116,3 +117,97 @@ api.add_resource(PredictDisease, '/predict')  # Endpoint for predicting diseases
 if __name__ == '__main__':
     # Start the Flask app
     app.run(debug=True, port=5000)
+=======
+from flask import Flask, request, jsonify
+import os
+import random
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Define a folder to save uploaded files
+UPLOAD_FOLDER = 'uploaded_images'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder if it doesn't exist
+
+# Set the upload folder in Flask's configuration
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Add a request logger to debug incoming requests
+@app.before_request
+def log_request():
+    print(f"Incoming request: {request.method} {request.path}")
+
+# 1. Homepage Route
+@app.route('/')
+def home():
+    """Homepage of the API"""
+    return "Welcome to the Chlorosphere API! Use /upload to upload files and /predict to get predictions."
+
+# 2. Upload Endpoint
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    """Endpoint to upload an image file"""
+    # Check if the request contains a file
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+
+    # Save the file to the upload folder
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
+
+    return jsonify({"message": "File uploaded successfully", "filename": file.filename}), 200
+
+# 3. Predict Endpoint
+@app.route('/predict', methods=['POST'])
+def predict():
+    """Endpoint to predict the disease from the uploaded image"""
+    # Check if the request contains a file
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+
+    # Simulate a prediction
+    predictions = ["Healthy", "Leaf Spot", "Blight", "Rust"]
+    predicted_disease = random.choice(predictions)  # Randomly pick a disease
+    confidence = round(random.uniform(0.8, 1.0), 2)  # Confidence between 80%-100%
+
+    return jsonify({
+        "predicted_disease": predicted_disease,
+        "confidence": confidence
+    }), 200
+
+# 4. List Uploaded Files
+@app.route('/files', methods=['GET'])
+def list_files():
+    """Endpoint to list all uploaded files"""
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return jsonify({"uploaded_files": files}), 200
+
+# 5. Delete Uploaded Files
+@app.route('/delete/<filename>', methods=['DELETE'])
+def delete_file(filename):
+    """Endpoint to delete a specific uploaded file"""
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if os.path.exists(filepath):
+        os.remove(filepath)
+        return jsonify({"message": f"File '{filename}' deleted successfully."}), 200
+    else:
+        return jsonify({"error": "File not found"}), 404
+
+# Run the app
+if __name__ == '__main__':
+    app.run(debug=True)
+
+@app.before_request
+def log_request():
+    print(f"Incoming request: {request.method} {request.path}")
+    print(f"Raw URL: {request.url}")
+
+>>>>>>> Stashed changes
