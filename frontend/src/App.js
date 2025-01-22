@@ -1,12 +1,17 @@
-import React from "react"; // This is the base React import
-import Upload from "./components/Upload"; // Import the Upload component we created
+import React, { useState } from "react";
+import Upload from "./components/Upload";
+import PredictionResult from "./components/PredictionResult";
 
-function App() {
+const App = () => {
+  const [filePath, setFilePath] = useState("");
+
   return (
     <div>
-      <Upload /> {/* Add the Upload component here */}
+      <h1>Chlorosphere: Plant Disease Detection</h1>
+      <Upload onUploadSuccess={(path) => setFilePath(path)} />
+      {filePath && <PredictionResult filePath={filePath} />}
     </div>
   );
-}
+};
 
-export default App; // This lets other files (like index.js) use App
+export default App;
